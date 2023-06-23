@@ -51,8 +51,6 @@ function _init()
 	current_tile_allowed_actions = {}
 
 	player_facing = "up"
-	player_x = 32
-	player_y = 100
 
 	tile_building_size = 1
 	building_main_room = 1
@@ -67,14 +65,18 @@ function _init()
 		{64, 0, 0, 0, 16, 16},
 	}
 
-	left_first_tile_to_check = 1
-	left_second_tile_to_check = 1
-	right_first_tile_to_check = 1
-	right_second_tile_to_check = 1
-	top_first_tile_to_check = 1
-	top_second_tile_to_check = 1
-	bottom_first_tile_to_check = 1
-	bottom_second_tile_to_check = 1
+	player = {}
+
+	player.left_first_tile_to_check = 1
+	player.left_second_tile_to_check = 1
+	player.right_first_tile_to_check = 1
+	player.right_second_tile_to_check = 1
+	player.top_first_tile_to_check = 1
+	player.top_second_tile_to_check = 1
+	player.bottom_first_tile_to_check = 1
+	player.bottom_second_tile_to_check = 1
+	player.x = 32
+	player.y = 100
 
 	player_moving = false
 	player_spr = 069
@@ -180,85 +182,87 @@ function _draw()
 			room_dimensions[current_main_room][6]
 		)
 
-		palt(0,f)print(left_first_tile_to_check, 38, 46, 0)palt(t,0)
-		palt(0,f)print(left_second_tile_to_check, 38, 54, 0)palt(t,0)
+		palt(0,f)print(player.eft_first_tile_to_check, 38, 46, 0)palt(t,0)
+		palt(0,f)print(player.left_second_tile_to_check, 38, 54, 0)palt(t,0)
 
-		palt(0,f)print(right_first_tile_to_check, 64, 46, 0)palt(t,0)
-		palt(0,f)print(right_second_tile_to_check, 64, 54, 0)palt(t,0)
+		palt(0,f)print(player.right_first_tile_to_check, 64, 46, 0)palt(t,0)
+		palt(0,f)print(player.right_second_tile_to_check, 64, 54, 0)palt(t,0)
 
-		palt(0,f)print(top_first_tile_to_check, 56, 26, 0)palt(t,0)
-		palt(0,f)print(top_second_tile_to_check, 56, 34, 0)palt(t,0)
+		palt(0,f)print(player.top_first_tile_to_check, 56, 26, 0)palt(t,0)
+		palt(0,f)print(player.top_second_tile_to_check, 56, 34, 0)palt(t,0)
 		
-		palt(0,f)print(bottom_first_tile_to_check, 56, 62, 0)palt(t,0)
-		palt(0,f)print(bottom_second_tile_to_check, 56, 70, 0)palt(t,0)
+		palt(0,f)print(player.bottom_first_tile_to_check, 56, 62, 0)palt(t,0)
+		palt(0,f)print(player.bottom_second_tile_to_check, 56, 70, 0)palt(t,0)
 
-		spr(player_spr, player_x, player_y, 1, 1, flip_x, flip_y)
+		spr(player_spr, player.x, player.y, 1, 1, flip_x, flip_y)
 
-		px_tile_to_check = (player_facing == "left") and player_x - 1 or (player_facing == "right") and player_x + 8 or player_x
-		py_tile_to_check = (player_facing == "up") and player_y - 1 or (player_facing == "down") and player_y + 8 or player_y
+		px_tile_to_check = (player_facing == "left") and player.x - 1 or (player_facing == "right") and player.x + 8 or player.x
+		py_tile_to_check = (player_facing == "up") and player.y - 1 or (player_facing == "down") and player.y + 8 or player.y
 
 		for z in all(building_z) do
-			spr(z.spr, z.px, z.py, 1, 1, z.flip_x, z.flip_y)
+			spr(z.spr, z.x, z.y, 1, 1, z.flip_x, z.flip_y)
 
-			line(z.px - 1, z.py, z.px - 1, z.py, 10)
-			line(z.px - 1, z.py + 8, z.px - 1, z.py +8, 10)
+			--[[
+			line(z.x - 1, z.y, z.x - 1, z.y, 10)
+			line(z.x - 1, z.y + 8, z.x - 1, z.y +8, 10)
 
-			line(z.px + 9, z.py, z.px + 9, z.py, 7)
-			line(z.px + 9, z.py + 8, z.px + 9, z.py +8, 7)
+			line(z.x + 9, z.y, z.x + 9, z.y, 7)
+			line(z.x + 9, z.y + 8, z.x + 9, z.y +8, 7)
 
-			line(z.px, z.py - 1, z.px, z.py - 1, 11)
-			line(z.px + 8, z.py - 1, z.px + 8, z.py - 1, 11)
+			line(z.x, z.y - 1, z.x, z.y - 1, 11)
+			line(z.x + 8, z.y - 1, z.x + 8, z.y - 1, 11)
 
-			line(z.px, z.py + 9, z.px, z.py + 9, 12)
-			line(z.px + 8, z.py + 9, z.px + 8, z.py + 9, 12)
+			line(z.x, z.y + 9, z.x, z.y + 9, 12)
+			line(z.x + 8, z.y + 9, z.x + 8, z.y + 9, 12)
+			]]--
 
-			left_fov_max = z.px - 24
-			left_fov = z.px - 1
-			right_fov_max = z.px + 32
-			right_fov = z.px + 8
-			top_fov_max  = z.py - 24
-			top_fov = z.py - 1
-			down_fov_max = z.py + 32
-			down_fov = z.py + 8
+			left_fov_max = z.x - 24
+			left_fov = z.x - 1
+			right_fov_max = z.x + 32
+			right_fov = z.x + 8
+			top_fov_max  = z.y - 24
+			top_fov = z.y - 1
+			down_fov_max = z.y + 32
+			down_fov = z.y + 8
 
 			if z.facing == "left" then
 				while left_fov>left_fov_max do
-					if (fget(mget(flr((left_fov - 1) / 8) + (current_main_room - 1) * 16, flr(z.py / 8)), 1) == true) goto exit_right_fov
+					if (fget(mget(flr((left_fov - 1) / 8) + (current_main_room - 1) * 16, flr(z.y / 8)), 1) == true) goto exit_right_fov
 					left_fov -= 1
 				end
 				::exit_right_fov::
 
-				line(left_fov, z.py+3, z.px - 1, z.py+3, 10)
+				line(left_fov, z.y+3, z.x - 1, z.y+3, 10)
 			end
 
 			if z.facing == "right" then
 				while right_fov<right_fov_max do
-					if (fget(mget(flr((right_fov + 1) / 8) + (current_main_room - 1) * 16, flr(z.py / 8)), 1) == true) goto exit_right_fov
+					if (fget(mget(flr((right_fov + 1) / 8) + (current_main_room - 1) * 16, flr(z.y / 8)), 1) == true) goto exit_right_fov
 					right_fov += 1
 				end
 				::exit_right_fov::
 
-				line(z.px+8, z.py+3, right_fov, z.py+3, 7)
+				line(z.x+8, z.y+3, right_fov, z.y+3, 7)
 			end
 
 			if z.facing == "up" then
 				while top_fov>top_fov_max do
-					if (fget(mget(flr((z.px) / 8) + (current_main_room - 1) * 16, flr((top_fov - 1) / 8)), 1) == true) goto exit_down_fov
+					if (fget(mget(flr((z.x) / 8) + (current_main_room - 1) * 16, flr((top_fov - 1) / 8)), 1) == true) goto exit_down_fov
 					top_fov -= 1
 				end
 				::exit_down_fov::
 
-				line(z.px+3, z.py - 1, z.px+3,top_fov, 7)
+				line(z.x+3, z.y - 1, z.x+3,top_fov, 7)
 			end
 
 			if z.facing == "down" then
 				while down_fov<down_fov_max do
-					if (fget(mget(flr((z.px) / 8) + (current_main_room - 1) * 16, flr((down_fov + 1) / 8)), 1) == true) goto exit_down_fov
+					if (fget(mget(flr((z.x) / 8) + (current_main_room - 1) * 16, flr((down_fov + 1) / 8)), 1) == true) goto exit_down_fov
 					down_fov += 1
 				end
 				::exit_down_fov::
 
-				line(z.px+3, z.py+8, z.px+3,down_fov, 7)
+				line(z.x+3, z.y+8, z.x+3,down_fov, 7)
 			end	
 		end
 	end
@@ -376,10 +380,10 @@ function _update()
 	end
 
 	if stage == 3 then
-		if (btn(0) and not left_first_tile_to_check and not left_second_tile_to_check) player_x -= 1 -- 1
-		if (btn(1) and not right_first_tile_to_check and not right_second_tile_to_check) player_x += 1 -- 2
-		if (btn(2) and not top_first_tile_to_check and not top_second_tile_to_check) player_y -= 1 -- 4
-		if (btn(3) and not bottom_first_tile_to_check and not bottom_second_tile_to_check) player_y += 1 -- 8
+		if (btn(0) and not player.left_first_tile_to_check and not player.left_second_tile_to_check) player.x -= 1 -- 1
+		if (btn(1) and not player.right_first_tile_to_check and not player.right_second_tile_to_check) player.x += 1 -- 2
+		if (btn(2) and not player.top_first_tile_to_check and not player.top_second_tile_to_check) player.y -= 1 -- 4
+		if (btn(3) and not player.bottom_first_tile_to_check and not player.bottom_second_tile_to_check) player.y += 1 -- 8
 
 		if (btn(0)) player_facing = "left" flip_x = false
 		if (btn(1)) player_facing = "right" flip_x = true
@@ -399,8 +403,8 @@ function _update()
 
 		if count(building_z) == 0 then
 			local zombie = {}
-			zombie.px = 32
-			zombie.py = 32
+			zombie.x = 32
+			zombie.y = 32
 			zombie.facing = "up"
 			zombie.spr = 085
 			zombie.counter = 0
@@ -428,15 +432,15 @@ function _update()
 			if (z.action == "move_up") z.facing = "up" z.flip_y= false z.spr = 085
 			if (z.action == "move_down") z.facing = "down" z.flip_y = true z.spr = 085
 
-			if (z.action == "move_down" and not z.bottom_first_tile_to_check) z.py += 0.25
-			if (z.action == "move_up" and not z.top_first_tile_to_check) z.py -= 0.25
-			if (z.action == "move_left" and not z.left_first_tile_to_check) z.px -= 0.25
-			if (z.action == "move_right" and not z.right_first_tile_to_check) z.px += 0.25
+			if (z.action == "move_down" and not z.bottom_first_tile_to_check) z.y += 0.25
+			if (z.action == "move_up" and not z.top_first_tile_to_check) z.y -= 0.25
+			if (z.action == "move_left" and not z.left_first_tile_to_check) z.x -= 0.25
+			if (z.action == "move_right" and not z.right_first_tile_to_check) z.x += 0.25
 
-			get_adjacent_zombie_tiles(z)
+			get_adjacent_entity_tiles(z)
 		end
 
-		get_adjacent_player_tiles()
+		get_adjacent_entity_tiles(player)
 	end
 end
 
@@ -483,33 +487,20 @@ function get_next_player_tile_flag()
 	return fget(get_next_player_tile_spr(), 7)
 end
 
-function get_adjacent_player_tiles()
-	left_first_tile_to_check = fget(mget(flr((player_x - 1) / 8) + (current_main_room - 1) * 16, flr(player_y / 8)), 1)
-	left_second_tile_to_check = fget(mget(flr((player_x - 1) / 8) + (current_main_room - 1) * 16, flr((player_y + 5) / 8)), 1)
+function get_adjacent_entity_tiles(e)
+	e.left_first_tile_to_check = fget(mget(flr((e.x - 1) / 8) + (current_main_room - 1) * 16, flr(e.y / 8)), 1)
+	e.left_second_tile_to_check = fget(mget(flr((e.x - 1) / 8) + (current_main_room - 1) * 16, flr((e.y + 5) / 8)), 1)
 
-	right_first_tile_to_check = fget(mget(flr((player_x + 8) / 8) + (current_main_room - 1) * 16, flr(player_y / 8)), 1)
-	right_second_tile_to_check = fget(mget(flr((player_x + 8) / 8) + (current_main_room - 1) * 16, flr((player_y + 5) / 8)), 1)
+	e.right_first_tile_to_check = fget(mget(flr((e.x + 8) / 8) + (current_main_room - 1) * 16, flr(e.y / 8)), 1)
+	e.right_second_tile_to_check = fget(mget(flr((e.x + 8) / 8) + (current_main_room - 1) * 16, flr((e.y + 5) / 8)), 1)
 
-	top_first_tile_to_check = fget(mget(flr(player_x / 8) + (current_main_room - 1) * 16, flr((player_y - 1) / 8)), 1)
-	top_second_tile_to_check = fget(mget(flr((player_x + 7) / 8) + (current_main_room - 1) * 16, flr((player_y - 1) / 8)), 1)
+	e.top_first_tile_to_check = fget(mget(flr(e.x / 8) + (current_main_room - 1) * 16, flr((e.y - 1) / 8)), 1)
+	e.top_second_tile_to_check = fget(mget(flr((e.x + 7) / 8) + (current_main_room - 1) * 16, flr((e.y - 1) / 8)), 1)
 
-	bottom_first_tile_to_check = fget(mget(flr(player_x / 8) + (current_main_room - 1) * 16, flr((player_y + 7) / 8)), 1)
-	bottom_second_tile_to_check = fget(mget(flr((player_x + 7) / 8) + (current_main_room - 1) * 16, flr((player_y + 7) / 8)), 1)
+	e.bottom_first_tile_to_check = fget(mget(flr(e.x / 8) + (current_main_room - 1) * 16, flr((e.y + 7) / 8)), 1)
+	e.bottom_second_tile_to_check = fget(mget(flr((e.x + 7) / 8) + (current_main_room - 1) * 16, flr((e.y + 7) / 8)), 1)
 end
 
-function get_adjacent_zombie_tiles(z)
-	z.left_first_tile_to_check = fget(mget(flr((z.px - 1) / 8) + (current_main_room - 1) * 16, flr(z.py / 8)), 1)
-	z.left_second_tile_to_check = fget(mget(flr((z.px - 1) / 8) + (current_main_room - 1) * 16, flr((z.py + 5) / 8)), 1)
-
-	z.right_first_tile_to_check = fget(mget(flr((z.px + 8) / 8) + (current_main_room - 1) * 16, flr(z.py / 8)), 1)
-	z.right_second_tile_to_check = fget(mget(flr((z.px + 8) / 8) + (current_main_room - 1) * 16, flr((z.py + 5) / 8)), 1)
-	
-	z.top_first_tile_to_check = fget(mget(flr(z.px / 8) + (current_main_room - 1) * 16, flr((z.py - 1) / 8)), 1)
-	z.top_second_tile_to_check = fget(mget(flr((z.px + 7) / 8) + (current_main_room - 1) * 16, flr((z.py - 1) / 8)), 1)
-
-	z.bottom_first_tile_to_check = fget(mget(flr(z.px / 8) + (current_main_room - 1) * 16, flr((z.py + 7) / 8)), 1)
-	z.bottom_second_tile_to_check = fget(mget(flr((z.px + 7) / 8) + (current_main_room - 1) * 16, flr((z.py + 7) / 8)), 1)
-end
 
 __gfx__
 0000000000000000000000066000000000000000000000000000000ff00000000000000000000000000000000000000000000000000000000000000000000000
