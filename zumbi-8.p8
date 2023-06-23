@@ -260,6 +260,9 @@ function _draw()
 			print(z.seen_player, z.x + 8, z.y, 7)
 			print(z.action, z.x + 8, z.y + 8, 7)
 			print(z.go_to[1] .. "," ..  z.go_to[2], z.x+8, z.y + 16, 7)
+			print(z.facing, z.x+8, z.y + 24, 7)
+			
+			print(flr(z.x) .. "," .. flr(z.y), z.x-16, z.y, 7)
 		end
 	end
 end
@@ -440,21 +443,26 @@ function _update()
 				if (z.action == "move_up" and not z.top_first_tile_to_check and not z.top_second_tile_to_check) z.y -= z.speed
 				if (z.action == "move_down" and not z.bottom_first_tile_to_check and not z.bottom_second_tile_to_check) z.y += z.speed
 
+				if (z.action == "move_left") z.facing = "left" z.flip_x = false z.spr = 088
+				if (z.action == "move_right") z.facing = "right" z.flip_x = true z.spr = 088
+				if (z.action == "move_up") z.facing = "up" z.flip_y= false z.spr = 085
+				if (z.action == "move_down") z.facing = "down" z.flip_y = true z.spr = 085
+
 				if z.facing == "left" then
 					if 	player.x >= flr(z.left_fov) and
 						player.x <= z.x - 1 and
-						player.y >= z.y and
-						player.y <= z.y + 8 then
-							z.seen_player = true
+						player.y >= z.y - 1 and
+						player.y <= z.y + 9 then
+							follow_player(z)
 					end
 				end
 
 				if z.facing == "right" then
 					if 	player.x >= z.x + 8 and
 						player.x <= flr(z.right_fov) and
-						player.y >= z.y and
-						player.y <= z.y + 8 then
-						z.seen_player = true
+						player.y >= z.y -1 and
+						player.y <= z.y + 9 then
+							follow_player(z)
 					end
 				end
 
@@ -463,7 +471,7 @@ function _update()
 						player.x <= z.x + 8 and
 						player.y >= flr(z.top_fov) and
 						player.y <= z.y - 1 then
-						z.seen_player = true
+							follow_player(z)
 					end
 				end
 
@@ -472,40 +480,29 @@ function _update()
 						player.x <= z.x + 8 and
 						player.y >= z.y + 8 and
 						player.y <= flr(z.down_fov) then
-						z.seen_player = true
+							follow_player(z)
 					end
 				end				
 
-				if (z.action == "move_left") z.facing = "left" z.flip_x = false z.spr = 088
-				if (z.action == "move_right") z.facing = "right" z.flip_x = true z.spr = 088
-				if (z.action == "move_up") z.facing = "up" z.flip_y= false z.spr = 085
-				if (z.action == "move_down") z.facing = "down" z.flip_y = true z.spr = 085
-
 				z.speed = 0.25
-			else 
-				if  z.action != "following_player" then
-					z.action = "following_player"
-					z.go_to = { flr(player.x / 8) * 8, flr(player.y / 8) * 8 }
-				end
-
-				--z.x = flr(z.x)
+			else 			
 				z.speed = 0.75
 
 				if z.facing == "left" then
 					z.x -= z.speed
-					if (z.x < z.go_to[1]) z.action = "looking_around"
+					if (z.x <= z.go_to[1]) z.action = "looking_around"
 				end
 				if z.facing == "right" then
 					z.x += z.speed
-					if (z.x > z.go_to[1]) z.action = "looking_around"
+					if (z.x >= z.go_to[1]) z.action = "looking_around"
 				end
 				if z.facing == "up" then
 					z.y -= z.speed
-					if (z.y > z.go_to[2]) z.action = "looking_around"
+					if (z.y <= z.go_to[2]) z.action = "looking_around"
 				end
 				if z.facing == "down" then
 					z.y += z.speed
-					if(z.y < z.go_to[2]) z.action = "looking_around" 
+					if(z.y >= z.go_to[2]) z.action = "looking_around" 
 				end
 
 				if  z.action == "looking_around" then
@@ -519,6 +516,12 @@ function _update()
 
 		get_adjacent_entity_tiles(player)
 	end
+end
+
+function follow_player(z)
+	z.seen_player = true
+	z.action = "following_player"
+	z.go_to = { flr(player.x / 8) * 8, flr(player.y / 8) * 8 }
 end
 
 function check_can_explore_current_board_tile(cpx, cpy)
