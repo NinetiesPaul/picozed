@@ -75,7 +75,7 @@ function _init()
 	player.bottom_second_tile_to_check = 1
 	player.x = 32
 	player.y = 100
-	player.speed = 1
+	player.speed = 0.75
 
 	player_moving = false
 	player_spr = 069
