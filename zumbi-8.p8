@@ -451,8 +451,8 @@ function _update()
 				if z.facing == "left" then
 					if 	player.x >= flr(z.left_fov) and
 						player.x <= z.x - 1 and
-						player.y >= z.y - 1 and
-						player.y <= z.y + 9 then
+						player.y >= z.y and
+						player.y <= z.y + 7 then
 							follow_player(z)
 					end
 				end
@@ -460,15 +460,15 @@ function _update()
 				if z.facing == "right" then
 					if 	player.x >= z.x + 8 and
 						player.x <= flr(z.right_fov) and
-						player.y >= z.y -1 and
-						player.y <= z.y + 9 then
+						player.y >= z.y and
+						player.y <= z.y + 7 then 
 							follow_player(z)
 					end
 				end
 
 				if z.facing == "up" then
 					if 	player.x >= z.x and
-						player.x <= z.x + 8 and
+						player.x <= z.x + 7 and
 						player.y >= flr(z.top_fov) and
 						player.y <= z.y - 1 then
 							follow_player(z)
@@ -477,7 +477,7 @@ function _update()
 
 				if z.facing == "down" then
 					if 	player.x >= z.x and
-						player.x <= z.x + 8 and
+						player.x <= z.x + 7 and
 						player.y >= z.y + 8 and
 						player.y <= flr(z.down_fov) then
 							follow_player(z)
