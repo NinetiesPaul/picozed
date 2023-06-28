@@ -54,8 +54,7 @@ function _init()
 
 	tile_building_size = 1
 	building_main_room = 1
-	
-	
+
 	room_dimensions = {
 		{0, 0, 0, 0, 16, 16},
 		{16, 0, 0, 0, 16, 16},
@@ -80,9 +79,13 @@ function _init()
 	player_moving = false
 	player_spr = 069
 	player_moving_counter = 0
+	player_spr_idx = 1
 
 	flip_x = false
 	flip_y = false
+
+	player_spr_x_tb = { 073, 074 }
+	player_spr_y_tb = { 070, 071 }
 
 	building_z = {}
 
@@ -181,20 +184,6 @@ function _draw()
 			room_dimensions[current_main_room][6]
 		)
 
-		--[[
-		palt(0,f)print(player.left_first_tile_to_check, 38, 44, 0)palt(t,0)
-		palt(0,f)print(player.left_second_tile_to_check, 38, 50, 0)palt(t,0)
-
-		palt(0,f)print(player.right_first_tile_to_check, 74, 44, 0)palt(t,0)
-		palt(0,f)print(player.right_second_tile_to_check, 74, 50, 0)palt(t,0)
-
-		palt(0,f)print(player.top_first_tile_to_check, 40, 26, 0)palt(t,0)
-		palt(0,f)print(player.top_second_tile_to_check, 70, 26, 0)palt(t,0)
-		
-		palt(0,f)print(player.bottom_first_tile_to_check, 40, 62, 0)palt(t,0)
-		palt(0,f)print(player.bottom_second_tile_to_check, 70, 62, 0)palt(t,0)
-		]]--
-
 		spr(player_spr, player.x, player.y, 1, 1, flip_x, flip_y)
 
 		for z in all(building_z) do
@@ -215,9 +204,6 @@ function _draw()
 					z.left_fov -= 1
 				end
 				::exit_right_fov::
-
-				--line(left_fov, z.y + 3, z.x - 1, z.y + 3, 14)
-				rect(flr(z.left_fov), z.y, z.x - 1, z.y + 8, 14)
 			end
 
 			if z.facing == "right" then
@@ -226,11 +212,6 @@ function _draw()
 					z.right_fov += 1
 				end
 				::exit_right_fov::
-
-				--line(z.x + 8, z.y + 3, right_fov, z.y + 3, 12)
-				rect(z.x + 8, z.y, flr(z.right_fov), z.y + 8, 12)
-
-
 			end
 
 			if z.facing == "up" then
@@ -239,9 +220,6 @@ function _draw()
 					z.top_fov -= 1
 				end
 				::exit_down_fov::
-
-				--line(z.x + 3, z.y - 1, z.x + 3, top_fov, 11)
-				rect(z.x, z.y - 1, z.x + 8, flr(z.top_fov), 11)
 			end
 
 			if z.facing == "down" then
@@ -250,19 +228,7 @@ function _draw()
 					z.down_fov += 1
 				end
 				::exit_down_fov::
-
-				--line(z.x + 3, z.y + 8, z.x + 3, down_fov, 10)
-				rect(z.x, z.y + 8, z.x + 8, flr(z.down_fov), 10)
 			end	
-
-			rect(z.go_to[1], z.go_to[2], z.go_to[1] + 7, z.go_to[2] + 7, 7)
-
-			print(z.seen_player, z.x + 8, z.y, 7)
-			print(z.action, z.x + 8, z.y + 8, 7)
-			print(z.go_to[1] .. "," ..  z.go_to[2], z.x+8, z.y + 16, 7)
-			print(z.facing, z.x+8, z.y + 24, 7)
-			
-			print(flr(z.x) .. "," .. flr(z.y), z.x-16, z.y, 7)
 		end
 	end
 end
@@ -391,12 +357,15 @@ function _update()
 
 		if player_moving then
 			player_moving_counter += 1
-			if (player_moving_counter % 5 == 0) player_spr += 1
-			if (player_facing == "left" or player_facing == "right") player_spr = (player_spr > 074) and 073 or player_spr
-			if (player_facing == "up" or player_facing == "down") player_spr = (player_spr > 071) and 070 or player_spr
+			if (player_moving_counter % 5 == 0) player_spr_idx += 1
+			if (player_spr_idx > 2) player_spr_idx = 1
 		else 
 			player_moving_counter = 0
+			player_spr_idx = 1
 		end
+
+		if (player_facing == "left" or player_facing == "right") player_spr = (player_moving) and player_spr_x_tb[player_spr_idx] or 072
+		if (player_facing == "up" or player_facing == "down") player_spr = (player_moving) and player_spr_y_tb[player_spr_idx] or 069
 
 		if count(building_z) == 0 then
 			local zombie = {}
@@ -449,38 +418,38 @@ function _update()
 				if (z.action == "move_down") z.facing = "down" z.flip_y = true z.spr = 085
 
 				if z.facing == "left" then
-					if 	player.x >= flr(z.left_fov) and
-						player.x <= z.x - 1 and
-						player.y >= z.y and
-						player.y <= z.y + 7 then
-							follow_player(z)
+					if 	player.x + 4>= flr(z.left_fov) and
+						player.x + 4 <= z.x - 1 and
+						player.y + 4>= z.y and
+						player.y + 4<= z.y + 7 then
+							chase_player(z)
 					end
 				end
 
 				if z.facing == "right" then
-					if 	player.x >= z.x + 8 and
-						player.x <= flr(z.right_fov) and
-						player.y >= z.y and
-						player.y <= z.y + 7 then 
-							follow_player(z)
+					if 	player.x + 4 >= z.x + 8 and
+						player.x + 4 <= flr(z.right_fov) and
+						player.y + 4 >= z.y and
+						player.y + 4 <= z.y + 7 then 
+							chase_player(z)
 					end
 				end
 
 				if z.facing == "up" then
-					if 	player.x >= z.x and
-						player.x <= z.x + 7 and
-						player.y >= flr(z.top_fov) and
-						player.y <= z.y - 1 then
-							follow_player(z)
+					if 	player.x + 4 >= z.x and
+						player.x + 4 <= z.x + 7 and
+						player.y + 4 >= flr(z.top_fov) and
+						player.y + 4 <= z.y - 1 then
+							chase_player(z)
 					end
 				end
 
 				if z.facing == "down" then
-					if 	player.x >= z.x and
-						player.x <= z.x + 7 and
-						player.y >= z.y + 8 and
-						player.y <= flr(z.down_fov) then
-							follow_player(z)
+					if 	player.x + 4 >= z.x and
+						player.x + 4 <= z.x + 7 and
+						player.y + 4 >= z.y + 8 and
+						player.y + 4 <= flr(z.down_fov) then
+							chase_player(z)
 					end
 				end				
 
@@ -490,6 +459,9 @@ function _update()
 
 				if z.facing == "left" then
 					z.x -= z.speed
+
+					
+
 					if (z.x <= z.go_to[1]) z.action = "looking_around"
 				end
 				if z.facing == "right" then
@@ -505,11 +477,17 @@ function _update()
 					if(z.y >= z.go_to[2]) z.action = "looking_around" 
 				end
 
+				
+
+				
+
 				if  z.action == "looking_around" then
 					z.seen_player = false
 					z.go_to = { 1, 1 }
 				end
 			end
+
+			caught_player(z)
 
 			get_adjacent_entity_tiles(z)
 		end
@@ -518,10 +496,19 @@ function _update()
 	end
 end
 
-function follow_player(z)
+function chase_player(z)
 	z.seen_player = true
 	z.action = "following_player"
 	z.go_to = { flr(player.x / 8) * 8, flr(player.y / 8) * 8 }
+end
+
+function caught_player(z)
+	if 	player.x + 4 >= z.x  and
+		player.x + 4 <= z.x + 7 and
+		player.y + 4 >= z.y and
+		player.y + 4 <= z.y + 7 then
+			stage = 4
+	end
 end
 
 function check_can_explore_current_board_tile(cpx, cpy)
