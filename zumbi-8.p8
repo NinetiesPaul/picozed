@@ -89,6 +89,8 @@ function _init()
 
 	building_z = {}
 
+	battle_z = {}
+
 	showing_current_tile_options = true
 	showing_party_options = false
 end
@@ -230,6 +232,21 @@ function _draw()
 				::exit_down_fov::
 			end	
 		end
+	end
+
+	if stage == 4 then
+		for liney = -1,8 do
+			for linex = -1, 8 do
+				-- rect(0 + linex * 8, 0 + (liney * 8), 8, 8, 10)
+				sspr(8, 40, 8, 8 , 0 + (linex * 16), 0 + (liney * 16), 16, 16)
+			end
+		end
+
+		for z in all(battle_z) do
+			sspr(40, 40, 8, 8, 56, 24, 16, 16, 8, 8, false, true)
+		end
+
+		sspr(40, 32, 8, 8, 56, 80, 16, 16)
 	end
 end
 
@@ -494,6 +511,9 @@ function _update()
 
 		get_adjacent_entity_tiles(player)
 	end
+
+	if stage == 4 then
+	end
 end
 
 function chase_player(z)
@@ -507,7 +527,13 @@ function caught_player(z)
 		player.x + 4 <= z.x + 7 and
 		player.y + 4 >= z.y and
 		player.y + 4 <= z.y + 7 then
-			stage = 4
+			-- 
+		local zombie = {}
+		zombie = z
+		add(battle_z, zombie)
+		del(building_z, z)
+		stage = 4
+			
 	end
 end
 
