@@ -9,9 +9,7 @@ function _init()
 	info_box_y = 1
 
 	types_of_tiles = {"drug\nstore","police\ndepartament","grocery\nstore","clothing\nstore","bar","gun store","house","gas\nstation","restaurant","flower\nshop","lake","farm","ranch","constr.\nstore"}
-
 	types_of_jobs = {"dOCTOR", "cOP", "cOOK", "hANDYMAN", "fARMER", "lUMBERJACK"}
-
 	types_of_perks = {
 		{"sMALL STOMACH", "consumes less food daily"},
 		{"sTRONG", "increased melee damage"},
@@ -19,7 +17,6 @@ function _init()
 		{"sKILLED", "does stuff faster"},
 		{"rESOURCEFUL", "uses less materials"},
 	}
-
 	types_of_flaws = {
 		{"gLUTTON", "eats a lot"},
 		{"wEAK", "less melee damage"},
@@ -27,7 +24,6 @@ function _init()
 		{"iNEPT", "takes more time to do something"},
 		{"wASTEFUL", "actions consumes more materials"}
 	}
-
 	names = { "tHOMAS", "bRUCE", "dOUG", "aNNA", "mARY", "cLAIRE" }
 
 	party_members = {}
@@ -50,7 +46,8 @@ function _init()
 	can_explore_current_selected_tile = false
 	current_tile_allowed_actions = {}
 
-	player_facing = "up"
+	building_z = {}
+	battle_z = {}
 
 	tile_building_size = 1
 	building_main_room = 1
@@ -76,6 +73,9 @@ function _init()
 	player.y = 100
 	player.speed = 0.75
 
+	player.health = 10
+
+	player_facing = "up"
 	player_moving = false
 	player_spr = 069
 	player_moving_counter = 0
@@ -87,9 +87,7 @@ function _init()
 	player_spr_x_tb = { 073, 074 }
 	player_spr_y_tb = { 070, 071 }
 
-	building_z = {}
 
-	battle_z = {}
 
 	showing_current_tile_options = true
 	showing_party_options = false
@@ -247,6 +245,7 @@ function _draw()
 		end
 
 		sspr(40, 32, 8, 8, 56, 80, 16, 16)
+		print(player.health, 64, 112, 7)
 	end
 end
 
@@ -391,6 +390,7 @@ function _update()
 			zombie.facing = "up"
 			zombie.spr = 085
 			zombie.counter = 0
+			zombie.attack_counter = 0
 			zombie.action = "idle"
 
 			zombie.left_first_tile_to_check = 1
@@ -513,6 +513,11 @@ function _update()
 	end
 
 	if stage == 4 then
+		for z in all(battle_z) do
+			z.attack_counter += 1
+			if (z.attack_counter == 150) player.health -= 1 z.attack_counter = 0
+			z.attack = false
+		end
 	end
 end
 
