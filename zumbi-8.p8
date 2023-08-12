@@ -48,6 +48,7 @@ function _init()
 
 	building_z = {}
 	battle_z = {}
+	current_turn = "zombie"
 
 	tile_building_size = 1
 	building_main_room = 1
@@ -72,8 +73,6 @@ function _init()
 	player.x = 32
 	player.y = 100
 	player.speed = 0.75
-
-	player.health = 10
 
 	player_facing = "up"
 	player_moving = false
@@ -244,8 +243,13 @@ function _draw()
 			sspr(40, 40, 8, 8, 56, 24, 16, 16, 8, 8, false, true)
 		end
 
-		sspr(40, 32, 8, 8, 56, 80, 16, 16)
-		print(player.health, 64, 112, 7)
+		for member in all(party_members) do
+			print(member.health, 64, 112, 7)
+			sspr(40, 32, 8, 8, 56, 80, 16, 16)
+			if (current_turn == "party") rect(53, 82, 74, 94, 7)
+		end
+
+		print(current_turn, 5, 5, 7)
 	end
 end
 
@@ -314,6 +318,8 @@ function _update()
 			new_guy.perk1 = perk1
 			new_guy.perk2 = perk2
 			new_guy.flaw = rnd(types_of_flaws_local)
+			new_guy.health = 10
+			new_guy.stamina = 5
 
 			add(party_members, new_guy)
 		end
@@ -390,8 +396,10 @@ function _update()
 			zombie.facing = "up"
 			zombie.spr = 085
 			zombie.counter = 0
-			zombie.attack_counter = 0
 			zombie.action = "idle"
+			zombie.health = 5
+			zombie.stamina = 3
+			zombie.attack = 3
 
 			zombie.left_first_tile_to_check = 1
 			zombie.left_second_tile_to_check = 1
@@ -410,6 +418,7 @@ function _update()
 			zombie.top_fov = 1
 			zombie.down_fov_max = 1
 			zombie.down_fov = 1
+			zombie.turn_ended = false
 
 			zombie.speed = 0.25
 			zombie.seen_player = false
@@ -513,10 +522,16 @@ function _update()
 	end
 
 	if stage == 4 then
-		for z in all(battle_z) do
-			z.attack_counter += 1
-			if (z.attack_counter == 150) player.health -= 1 z.attack_counter = 0
-			z.attack = false
+		if current_turn == "zombie" then
+
+			for z in all(battle_z) do
+				if not z.turn_ended then
+				end
+			end
+
+			current_turn = "party"
+		else
+
 		end
 	end
 end
