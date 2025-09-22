@@ -199,10 +199,10 @@ function _draw()
 
 			if z.facing == "left" then
 				while z.left_fov > z.left_fov_max do
-					if (fget(mget_call(z.left_fov - 1, z.y), 1) == true) goto exit_right_fov
+					if (fget(mget_call(z.left_fov - 1, z.y), 1) == true) goto exit_left_fov
 					z.left_fov -= 1
 				end
-				::exit_right_fov::
+				::exit_left_fov::
 			end
 
 			if z.facing == "right" then
@@ -215,10 +215,10 @@ function _draw()
 
 			if z.facing == "up" then
 				while z.top_fov > z.top_fov_max do
-					if (fget(mget_call(z.x, z.top_fov - 1), 1) == true) goto exit_down_fov
+					if (fget(mget_call(z.x, z.top_fov - 1), 1) == true) goto exit_top_fov
 					z.top_fov -= 1
 				end
-				::exit_down_fov::
+				::exit_top_fov::
 			end
 
 			if z.facing == "down" then
@@ -391,7 +391,7 @@ function _update()
 
 		if count(building_z) == 0 then
 			local zombie = {}
-			zombie.x = 40
+			zombie.x = 28
 			zombie.y = 25
 			zombie.facing = "up"
 			zombie.spr = 085
