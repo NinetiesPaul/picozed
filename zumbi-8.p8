@@ -188,46 +188,11 @@ function _draw()
 		for z in all(building_z) do
 			spr(z.spr, z.x, z.y, 1, 1, z.flip_x, z.flip_y)
 
-			z.left_fov_max = z.x - 24
-			z.left_fov = z.x - 1
-			z.right_fov_max = z.x + 32
-			z.right_fov = z.x + 8
-			z.top_fov_max  = z.y - 24
-			z.top_fov = z.y - 1
-			z.down_fov_max = z.y + 32
-			z.down_fov = z.y + 8
-
-			if z.facing == "left" then
-				while z.left_fov > z.left_fov_max do
-					if (fget(mget_call(z.left_fov - 1, z.y), 1) == true) goto exit_left_fov
-					z.left_fov -= 1
-				end
-				::exit_left_fov::
-			end
-
-			if z.facing == "right" then
-				while z.right_fov < z.right_fov_max do
-					if (fget(mget_call(z.right_fov + 1, z.y), 1) == true) goto exit_right_fov
-					z.right_fov += 1
-				end
-				::exit_right_fov::
-			end
-
-			if z.facing == "up" then
-				while z.top_fov > z.top_fov_max do
-					if (fget(mget_call(z.x, z.top_fov - 1), 1) == true) goto exit_top_fov
-					z.top_fov -= 1
-				end
-				::exit_top_fov::
-			end
-
-			if z.facing == "down" then
-				while z.down_fov < z.down_fov_max do
-					if (fget(mget_call(z.x, z.down_fov + 1), 1) == true) goto exit_down_fov
-					z.down_fov += 1
-				end
-				::exit_down_fov::
-			end	
+			-- fov (debug)
+			rect(z.left_fov, z.y, z.x-1, z.y + 7, 0)
+			rect(z.x+8, z.y, z.right_fov, z.y + 7, 7)
+			rect(z.x, z.top_fov, z.x+7, z.y-1, 8)
+			rect(z.x, z.y+8, z.x+7, z.down_fov, 10)
 		end
 	end
 
@@ -429,6 +394,47 @@ function _update()
 
 		for z in all(building_z) do
 			z.counter += 1
+
+			z.left_fov = z.x - 1
+			z.left_fov_max = z.x - 24
+			z.right_fov = z.x + 8
+			z.right_fov_max = z.x + 32
+			z.top_fov = z.y - 1
+			z.top_fov_max  = z.y - 24
+			z.down_fov = z.y + 8
+			z.down_fov_max = z.y + 32
+
+			if z.facing == "left" then
+				while z.left_fov > z.left_fov_max do
+					if (fget(mget_call(z.left_fov - 1, z.y), 1) == true) goto exit_left_fov
+					z.left_fov -= 1
+				end
+				::exit_left_fov::
+			end
+
+			if z.facing == "right" then
+				while z.right_fov < z.right_fov_max do
+					if (fget(mget_call(z.right_fov + 1, z.y), 1) == true) goto exit_right_fov
+					z.right_fov += 1
+				end
+				::exit_right_fov::
+			end
+
+			if z.facing == "up" then
+				while z.top_fov > z.top_fov_max do
+					if (fget(mget_call(z.x, z.top_fov - 1), 1) == true) goto exit_top_fov
+					z.top_fov -= 1
+				end
+				::exit_top_fov::
+			end
+
+			if z.facing == "down" then
+				while z.down_fov < z.down_fov_max do
+					if (fget(mget_call(z.x, z.down_fov + 1), 1) == true) goto exit_down_fov
+					z.down_fov += 1
+				end
+				::exit_down_fov::
+			end	
 
 			if not z.seen_player then
 				if (z.counter % 60 == 0) z.action = rnd({"idle", "move_left", "move_right", "move_up", "move_down"}) 
